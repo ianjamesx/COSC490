@@ -22,13 +22,18 @@ screen = pygame.display.set_mode(WINDOW)
 
 grid = []
  
+#add an array nested in array of grids
 def initGrid():
 	for row in range(gridCount):
-		# Add an empty array that will hold each cell
-		# in this row
 		grid.append([])
 		for column in range(gridCount):
-			grid[row].append(0)  # Append a cell
+			grid[row].append(0)
+
+def setBounds():
+	for row in range(gridCount):
+		for column in range(gridCount):
+			if isBound(row, column):
+				grid[row][column] = -1
 
 #determine if grid at this row/col is a bound grid (end of map)
 def isBound(row, col):
@@ -56,6 +61,7 @@ def drawGrid():
 
 
 initGrid()
+setBounds()
  
 # Loop until the user clicks the close button.
 done = False
