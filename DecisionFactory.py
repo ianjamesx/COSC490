@@ -10,13 +10,13 @@ BLUE = (0, 0, 255)
 # This sets the WIDTH and HEIGHT of each grid location, and space between grids
 GRIDX = 40
 GRIDY = 40
-gridCount = 6
+gridCount = 11
 
 WINDOWX = 500
 WINDOWY = 500
 SPACING = 5
 
-FPS = 1
+FPS = 60
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
 
@@ -111,17 +111,28 @@ def spawnPortal():
         if isBound(randRow,randCol)==False and grid[randRow][randCol]!=1:
             grid[randRow][randCol]=2
             break
+def getPortalRow():
+    for row in range(gridCount):
+        for column in range(gridCount):
+            if grid[row][column]==2:
+                return int(row)
+def getPortalCol():
+    for row in range(gridCount):
+        for column in range(gridCount):
+            if grid[row][column]==2:
+                return int(column)
 def findDudeRow():
     for row in range(gridCount):
         for column in range(gridCount):
             if grid[row][column]==1:
-                return row
+                return int(row)
 def findDudeCol():
     for row in range(gridCount):
         for column in range(gridCount):
             if grid[row][column]==1:
-                return column
-def updateDude():
+                return int(column)
+    return
+def updateDude(portalRow,portalCol):
     newDir = direction.get_decision()
     print(newDir)
     dudeRow=findDudeRow()
@@ -139,13 +150,12 @@ def updateDude():
         firstDudeCol=findDudeCol()
         grid[firstDudeRow][firstDudeCol]=0
         grid[dudeRow][dudeCol]=1
-        if grid[dudeRow][dudeCol]==2:
-            direction.put_result('portal')
+        if dudeRow==portalRow and dudeCol == portalCol:
+            direction.put_result(direction.results[2])
         else:
-            direction.put_result('success')
+            direction.put_result(direction.results[0])
     else:
-        direction.put_result('failure')
-        updateDude()
+        direction.put_result(direction.results[1])
 
 
 
@@ -153,7 +163,8 @@ initGrid()
 setBounds()
 spawnDude()
 spawnPortal()
-
+portalRow=getPortalRow()
+portalCol=getPortalCol()
 # Loop until the user clicks the close button.
 done = False
 
@@ -161,23 +172,22 @@ done = False
 clock = pygame.time.Clock()
 
 while not done:
-    for event in pygame.event.get():  # User did something
-        if event.type == pygame.QUIT:  # If user clicked close
-            done = True  # Flag that we are done so we exit this loop
+    if direction.last_result==direction.results[2]:
+        print("Steps taken: %s" % countSteps)
+        pygame.quit()
+    else:
+        clock.tick(FPS)
+        pygame.display.flip()
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                done = True  # Flag that we are done so we exit this loop
+        screen.fill(BLACK)
 
     # Set the screen background
-    screen.fill(BLACK)
-    updateDude()
+    updateDude(portalRow,portalCol)
     countSteps=countSteps+1
     # Draw the grid
     drawGrid()
+    #print(portalRow,portalCol)
     print(direction.last_result)
-    if direction.last_result=="portal":
-        print(countSteps)
-        pygame.quit()
-    clock.tick(FPS)
-
-    pygame.display.flip()
-
-pygame.quit()
 
