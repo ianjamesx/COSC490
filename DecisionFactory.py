@@ -5,17 +5,18 @@ import pygame
 pygame.init()
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
  
 # This sets the WIDTH and HEIGHT of each grid location, and space between grids
 GRIDX = 40
 GRIDY = 40
-gridColor = WHITE
 gridCount = 11
 
 WINDOWX = 500
 WINDOWY = 500
 SPACING = 5
 
+FPS = 60
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
 
@@ -29,9 +30,24 @@ def initGrid():
 		for column in range(gridCount):
 			grid[row].append(0)  # Append a cell
 
+#determine if grid at this row/col is a bound grid (end of map)
+def isBound(row, col):
+	if (col == 0 or col == gridCount-1):
+		return True
+	if (row == 0 or row == gridCount-1):
+		return True
+	return False
+
 def drawGrid():
 	for row in range(gridCount):
 		for column in range(gridCount):
+
+			#color outside grids red to represent bounds
+			if isBound(row, column):
+				gridColor = RED
+			else:
+				gridColor = WHITE
+
 			pygame.draw.rect(screen, gridColor,
 			[(SPACING + GRIDX) * column + SPACING,
 			(SPACING + GRIDY) * row + SPACING,
@@ -57,11 +73,9 @@ while not done:
  
     # Draw the grid
     drawGrid()
+
+    clock.tick(FPS)
  
-    # Limit to 60 frames per second
-    clock.tick(60)
- 
-    # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
 pygame.quit()
