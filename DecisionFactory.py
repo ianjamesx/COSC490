@@ -5,8 +5,6 @@ import pygame
 pygame.init()
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
  
 # This sets the WIDTH and HEIGHT of each grid location, and space between grids
 GRIDX = 40
@@ -21,7 +19,6 @@ SPACING = 5
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
 
-#init grid
 grid = []
  
 def initGrid():
@@ -66,9 +63,7 @@ while not done:
  
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
- 
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
+
 pygame.quit()
 
 '''
