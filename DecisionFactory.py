@@ -11,6 +11,8 @@ RED = (255, 0, 0)
 # This sets the WIDTH and HEIGHT of each grid location, and space between grids
 GRIDX = 40
 GRIDY = 40
+gridColor = WHITE
+gridCount = 11
 
 WINDOWX = 500
 WINDOWY = 500
@@ -18,27 +20,22 @@ SPACING = 5
 
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
- 
-# This sets the margin between each cell
 
 #init grid
 grid = []
  
 def initGrid():
-	for row in range(10):
+	for row in range(gridCount):
 		# Add an empty array that will hold each cell
 		# in this row
 		grid.append([])
-		for column in range(10):
+		for column in range(gridCount):
 			grid[row].append(0)  # Append a cell
 
 def drawGrid():
-	for row in range(10):
-		for column in range(10):
-			color = WHITE
-			if grid[row][column] == 1:
-				color = GREEN
-			pygame.draw.rect(screen, color,
+	for row in range(gridCount):
+		for column in range(gridCount):
+			pygame.draw.rect(screen, gridColor,
 			[(SPACING + GRIDX) * column + SPACING,
 			(SPACING + GRIDY) * row + SPACING,
 			GRIDX,
@@ -46,10 +43,6 @@ def drawGrid():
 
 
 initGrid()
- 
-# Set row 1, cell 5 to one. (Remember rows and
-# column numbers start at zero.)
-grid[1][5] = 1
  
 # Loop until the user clicks the close button.
 done = False
