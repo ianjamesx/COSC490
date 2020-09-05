@@ -10,16 +10,17 @@ BLUE = (0, 0, 255)
 # This sets the WIDTH and HEIGHT of each grid location, and space between grids
 GRIDX = 40
 GRIDY = 40
-gridCount = 11
+gridCount = 6
 
 WINDOWX = 500
 WINDOWY = 500
 SPACING = 5
 
-FPS = 30
+FPS = 1
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
 
+countSteps = 0
 grid = []
 class DecisionFactory:
     def __init__(self, name='Davros'):
@@ -110,36 +111,41 @@ def spawnPortal():
         if isBound(randRow,randCol)==False and grid[randRow][randCol]!=1:
             grid[randRow][randCol]=2
             break
-def findDude(dudeRow, dudeCol):
+def findDudeRow():
     for row in range(gridCount):
         for column in range(gridCount):
             if grid[row][column]==1:
-                dudeRow=row
-                dudeCol=column
-                return
+                return row
+def findDudeCol():
+    for row in range(gridCount):
+        for column in range(gridCount):
+            if grid[row][column]==1:
+                return column
 def updateDude():
     newDir = direction.get_decision()
     print(newDir)
-    dudeRow=1
-    dudeCol=1
-    firstDudeRow=1
-    firstDudeCol=1
-    findDude(dudeRow, dudeCol)
-    if newDir=="up":
+    dudeRow=findDudeRow()
+    dudeCol=findDudeCol()
+    if newDir=='up':
         dudeRow=dudeRow-1
-    elif newDir=="down":
+    elif newDir=='down':
         dudeRow=dudeRow+1
-    elif newDir=="right":
+    elif newDir=='right':
         dudeCol=dudeCol+1
-    elif newDir=="left":
+    elif newDir=='left':
         dudeCol=dudeCol-1
     if isBound(dudeRow, dudeCol)==False:
-        findDude(firstDudeRow, firstDudeCol)
+        firstDudeRow=findDudeRow()
+        firstDudeCol=findDudeCol()
         grid[firstDudeRow][firstDudeCol]=0
         grid[dudeRow][dudeCol]=1
-        direction.put_result("success")
+        if grid[dudeRow][dudeCol]==2:
+            direction.put_result('portal')
+        else:
+            direction.put_result('success')
     else:
-        direction.put_result("failure")
+        direction.put_result('failure')
+        updateDude()
 
 
 
@@ -162,8 +168,13 @@ while not done:
     # Set the screen background
     screen.fill(BLACK)
     updateDude()
+    countSteps=countSteps+1
     # Draw the grid
     drawGrid()
+    print(direction.last_result)
+    if direction.last_result=="portal":
+        print(countSteps)
+        pygame.quit()
     clock.tick(FPS)
 
     pygame.display.flip()
