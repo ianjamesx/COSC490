@@ -3,12 +3,14 @@ import numpy as np
 class MapTiles:
     def __init__(self, x, y):
         self.coordinate = [x,y]
-        self.minsweepernumber = 0
+        self.minesweepernumber = 0
         self.successDirs = []
         self.checkedSuccessDirs = []
         self.priority = 1 #minesweeper number plus priority
+    '''
     def setSurroundingWalls(self,numofwalls):
         self.minesweepernumber = numofwalls
+    '''
 class DecisionFactory:
     def __init__(self, name='Dude'):
         self.name = name
@@ -17,8 +19,10 @@ class DecisionFactory:
         self.last_result = self.results[0]
         self.last_direction = 'wait'
         self.state_pos = [0, 0]
-        self.map = np.array()
-        np.append(self.map,MapTiles(self.state_pos[0],self.state_pos[1]))
+        self.map = np.array([])
+        self.set_direction = False;
+        #np.append(self.map,MapTiles(self.state_pos[0],self.state_pos[1]))
+        self.map = np.append(self.map ,MapTiles(0,0))
         self.orderI = 0
         self.prioDirs = ['up','right','down']
 
@@ -36,7 +40,25 @@ class DecisionFactory:
         if self.last_result == 'failure':
             self.orderI += 1
             currTile = self.findMapTile(self.state_pos[0],self.state_pos[1])
-            currTile.setSurroundingWalls(currTile.minesweepernumber+1)
+            #self.update_position()
+            currTile.minesweepernumber += 1
+            print("MinesweeperNumber", currTile.minesweepernumber)
+        if self.set_direction == True :
+            possible_direction = ''
+            if self.last_direction == 'up' :
+                possible_direction = 'down'
+            elif self.last_direction == 'down' :
+                possible_direction = 'up'
+            elif self.last_direction == 'left' :
+                possible_direction = 'right'
+            elif self.last_direction == 'right' :
+                possible_direction = 'left'
+            currTile = self.findMapTile(self.state_pos[0],self.state_pos[1])
+            currTile.successDirs.append(possible_direction)
+            self.set_direction = False
+        elif self.last_result == 'success':
+            self.set_direction = True
+        self.update_position()
         return order[self.orderI-1]
 
     def next_direction(self):
@@ -47,32 +69,36 @@ class DecisionFactory:
         #when picking a decision, check array if in there, if it is then pick a new one
         #store the failed decision so we don't pick it again
 
+    def findMapTile(self,x,y):
+        for i in self.map:
+            print ("Here", i)
+            if i.coordinate[0] == x and i.coordinate[1] == y:
+                return i
 
     def update_position(self):
-        if self.last_direction == "up" and self.last_result != "failure":
+        if self.last_direction == 'up' and self.last_result != 'failure':
+            print("JESUS CHRIST! 1")
             self.state_pos[1] = self.state_pos[1]+1
-        elif self.last_direction == "down" and self.last_result != "failure":
+        elif self.last_direction == 'down' and self.last_result != 'failure':
+            print("JESUS CHRIST! 2")
             self.state_pos[1] = self.state_pos[1]-1
-        elif self.last_direction == "left" and self.last_result != "failure":
+        elif self.last_direction == 'left' and self.last_result != 'failure':
+            print("JESUS CHRIST! 3 ")
             self.state_pos[0] = self.state_pos[0]-1
-        elif self.last_direction == "right" and self.last_result != "failure":
+        elif self.last_direction == 'right' and self.last_result != 'failure':
+            print("JESUS CHRIST! 4")
             self.state_pos[0] = self.state_pos[0]+1
     def make_MapTile(self):
         existFlag = False
         if self.last_result == 'success':
             for i in self.map:
-                if i.state_pos[0] == self.state_pos[0] and i.state_pos[1] == self.state_pos[1]:
+                if i.coordinate[0] == self.state_pos[0] and i.coordinate[1] == self.state_pos[1]:
                     existFlag = True
             if not existFlag:
-                map.append(MapTiles(self.state_pos[0],self.state_pos[1]))
-
-    #def setMapTile(self):
+                self.map.append(MapTiles(self.state_pos[0],self.state_pos[1]))
 
 
-    def findMapTile(self,x,y):
-        for i in self.map:
-            if i.state_pos[0] == x and i.state_pos[1] == y:
-                return i
+
     def random_direction(self):
         #r = random.randint(0,4) # Includes wait state
         r = random.randint(1,4) # Does NOT include wait state
