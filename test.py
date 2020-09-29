@@ -20,7 +20,7 @@ WINDOWX = 500
 WINDOWY = 500
 SPACING = 5
 
-FPS = 10
+FPS = 100
 WINDOW = [WINDOWX, WINDOWY]
 screen = pygame.display.set_mode(WINDOW)
 
