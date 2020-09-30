@@ -49,6 +49,8 @@ def isBound(row, col):
         return True
     if (row == 0 or row == gridCount-1):
         return True
+    if (row == 2 and col != 9):
+        return True
     return False
 
 def drawGrid():

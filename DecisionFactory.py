@@ -1,5 +1,5 @@
-#Not running for loop in make decision
-#May need to double loop though 2d array
+#Check for previous direction not working
+#Github has the most updated code
 
 import random
 import numpy as np
@@ -20,7 +20,7 @@ class DecisionFactory:
         self.last_result = self.results[0]
         self.last_direction = 'wait'
         self.state_pos = [0, 0]
-        self.lastCoordinate = [0, 0]
+        self.last_nonStar = 'wait'
         self.map = np.array([])
         self.set_direction = 0;
 
@@ -57,8 +57,15 @@ class DecisionFactory:
         self.update_priority(currTile.successDirs[dude])
         print currTile.successDirs[dude]
         #self.lastCoordinate = [self.state_pos[0], self.state_pos[1]]
-        self.lastCoordinate[0] = self.state_pos[0]
-        self.lastCoordinate[1] = self.state_pos[1]
+        self.last_nonStar = currTile.successDirs[dude]
+        if currTile.successDirs[dude] == 'up':
+            self.last_nonStar = 'down'
+        elif currTile.successDirs[dude] == 'down':
+            self.last_nonStar = 'up'
+        elif currTile.successDirs[dude] == 'left':
+            self.last_nonStar = 'right'
+        elif currTile.successDirs[dude] == 'right':
+            self.last_nonStar = 'left'
         return currTile.successDirs[dude]
 
     def update_priority(self, direction):
@@ -102,12 +109,12 @@ class DecisionFactory:
             direction = self.make_decision()
             self.last_direction = direction
             return direction
+        #print("OI", self.orderI)
+        if self.last_nonStar == self.order[self.orderI - 1] and self.orderI % 2 == 1 and self.order[self.orderI - 1] != 'wait':
+            self.orderI += 2
         self.last_direction = self.order[self.orderI - 1]
         return self.order[self.orderI - 1]
 
-        #if self.orderI % 2 == 1 and self.lastCoordinate[0] == local_dudex and self.lastCoordinate[1] == local_dudey:
-        #    print("How the hell are we here")
-        #    self.orderI += 1
 
 
 
@@ -184,6 +191,7 @@ class DecisionFactory:
             #print ("Here", i)
             if i.coordinate[0] == x and i.coordinate[1] == y:
                 return i
+        #self.make_MapTile()
 
     def update_position(self):
         print("IN UPDATE POSITION")
@@ -197,17 +205,17 @@ class DecisionFactory:
             self.state_pos[0] = self.state_pos[0]-1
         elif self.last_direction == 'right' and self.last_result != 'failure':
             self.state_pos[0] = self.state_pos[0]+1
-
+        print("STATE POS" , self.state_pos[0], self.state_pos[1])
     def make_MapTile(self):
         existFlag = False
         #print("LAST RESULT ", self.last_result)
         #print("STATE POS", self.state_pos[0], self.state_pos[1])
         for i in self.map:
-            #print("MAP" , i.coordinate[0], i.coordinate[1])
+            print("MAP" , i.coordinate[0], i.coordinate[1])
             if i.coordinate[0] == self.state_pos[0] and i.coordinate[1] == self.state_pos[1]:
                 existFlag = True
         if not existFlag:
-            print ("STATE POS", self.state_pos[0], self.state_pos[1])
+            #print ("STATE POS", self.state_pos[0], self.state_pos[1])
             self.map = np.append(self.map, MapTiles(self.state_pos[0],self.state_pos[1]))
 
 
