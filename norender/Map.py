@@ -131,6 +131,9 @@ counter = 0
 #for adjusting FPS
 #clock = pygame.time.Clock()
 
+first_data = open("first.txt", "a")
+last_data = open("last.txt", "a")
+
 while not done:
     #clock.tick(FPS
     #pygame.display.flip()
@@ -146,10 +149,12 @@ while not done:
     if not check:
         check = Battleship.check_first(test2)
         if check:
-            print(str(counter))
+            first_data.write(str(counter) + str('\n'))
+            #print(str(counter))
     check_all = Battleship.check_all(test2)
     if check_all:
-        print(str(counter))
+        last_data.write(str(counter) + str('\n'))
+        #print(str(counter))
         #Battleship.print_gamers(test2)
         break
     #textsurface = myfont.render('Generations', False, (255, 255, 255))
@@ -158,4 +163,7 @@ while not done:
     #drawGen(counter)
     counter +=1
     #pygame.time.wait(100)
+
+first_data.close()
+last_data.close()
 
