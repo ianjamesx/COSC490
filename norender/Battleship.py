@@ -8,7 +8,7 @@ import importlib
 #from Map import print_board, set_board
 
 
-POP_SIZE = 10
+POP_SIZE = 100
 GENERATIONS = 100
 board = np.full((10, 10), 0)
 
